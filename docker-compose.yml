@@ -6,6 +6,9 @@ services:
     container_name: dersaadet_frontend
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./openssl:/etc/nginx/ssl:ro
     depends_on:
       - api
     restart: always
