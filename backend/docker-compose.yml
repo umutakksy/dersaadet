@@ -4,19 +4,31 @@ services:
   api:
     build: .
     container_name: dersaadet_api
-    ports:
-      - "8088:8088"
+    # ports: # REMOVED: No direct access to API, go through Nginx
+    #   - "8088:8088"
     env_file: .env
     environment:
       - REDIS_URL=redis://redis:6379/0
-      # If using local mongo service below, uncomment this:
-      # - MONGO_URI=mongodb://mongo:27017/dersaadet
+      - MONGO_URI=mongodb://mongo:27017/dersaadet
     volumes:
       - ./uploads:/app/uploads
       - ./results:/app/results
     depends_on:
       - redis
       - mongo
+    restart: always
+
+  # Nginx (Unified Frontend & Proxy)
+  nginx:
+    image: nginx:alpine
+    container_name: dersaadet_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - api
     restart: always
 
   # Celery Worker (OCR & Translation & PDF Processing)
@@ -27,8 +39,7 @@ services:
     env_file: .env
     environment:
       - REDIS_URL=redis://redis:6379/0
-      # If using local mongo service below, uncomment this:
-      # - MONGO_URI=mongodb://mongo:27017/dersaadet
+      - MONGO_URI=mongodb://mongo:27017/dersaadet
     volumes:
       - ./uploads:/app/uploads
       - ./results:/app/results
