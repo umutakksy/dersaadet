@@ -3,13 +3,12 @@ FROM python:3.13-slim
 
 # Install system dependencies
 # poppler-utils for pdf2image
-# tesseract-ocr and ottoman pack for fallback OCR
-# libgl1-mesa-glx for opencv
+# tesseract-ocr for fallback OCR
+# libgl1 for opencv (updated from libgl1-mesa-glx for Debian Trixie/3.13-slim)
 RUN apt-get update && apt-get install -y \
     poppler-utils \
     tesseract-ocr \
-    tesseract-ocr-ota \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
