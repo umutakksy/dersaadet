@@ -1,0 +1,62 @@
+# /docker-compose.yml
+services:
+  # Frontend & Reverse Proxy
+  frontend:
+    build: ./frontend
+    container_name: dersaadet_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: always
+
+  # Flask API
+  api:
+    build: ./backend
+    container_name: dersaadet_api
+    env_file: ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - MONGO_URI=mongodb://mongo:27017/dersaadet
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/results:/app/results
+    depends_on:
+      - redis
+      - mongo
+    restart: always
+
+  # Celery Worker
+  worker:
+    build: ./backend
+    container_name: dersaadet_worker
+    command: celery -A celery_worker.celery_app worker --loglevel=info
+    env_file: ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - MONGO_URI=mongodb://mongo:27017/dersaadet
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/results:/app/results
+      - ./backend/images:/app/images
+    depends_on:
+      - redis
+      - mongo
+    restart: always
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: dersaadet_redis
+    restart: always
+
+  # MongoDB
+  mongo:
+    image: mongo:6.0
+    container_name: dersaadet_mongo
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  mongo_data:
