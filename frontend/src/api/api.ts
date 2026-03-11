@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = ''; // Use proxy in dev, same origin in prod
+const API_BASE_URL = 'http://13.63.57.2:8088'; 
 
 export interface JobStatusResponse {
     status: string;
