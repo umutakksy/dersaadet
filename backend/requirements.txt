@@ -1,0 +1,17 @@
+flask
+flask-cors
+pymongo
+celery
+redis
+pytesseract
+pdf2image
+PyMuPDF
+reportlab
+openai
+python-dotenv
+opencv-python
+pillow
+gunicorn
+groq
+markdown2
+bleach

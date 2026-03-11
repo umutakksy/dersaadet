@@ -1,0 +1,62 @@
+# /backend/docker-compose.yml
+version: '3.8'
+
+services:
+  # Dersaadet API (Flask)
+  api:
+    build: .
+    container_name: dersaadet_api
+    ports:
+      - "8088:8088"
+    env_file: .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      # If using local mongo service below, uncomment this:
+      # - MONGO_URI=mongodb://mongo:27017/dersaadet
+    volumes:
+      - ./uploads:/app/uploads
+      - ./results:/app/results
+    depends_on:
+      - redis
+      - mongo
+    restart: always
+
+  # Celery Worker (OCR & Translation & PDF Processing)
+  worker:
+    build: .
+    container_name: dersaadet_worker
+    command: celery -A celery_worker.celery_app worker --loglevel=info
+    env_file: .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      # If using local mongo service below, uncomment this:
+      # - MONGO_URI=mongodb://mongo:27017/dersaadet
+    volumes:
+      - ./uploads:/app/uploads
+      - ./results:/app/results
+      - ./images:/app/images
+    depends_on:
+      - redis
+      - mongo
+    restart: always
+
+  # Redis (Task Queue)
+  redis:
+    image: redis:7-alpine
+    container_name: dersaadet_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # MongoDB (Database)
+  mongo:
+    image: mongo:6.0
+    container_name: dersaadet_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - dersaadet_data:/data/db
+    restart: always
+
+volumes:
+  dersaadet_data:
