@@ -1,19 +1,13 @@
 # /docker-compose.yml
 services:
-  # Frontend
-  frontend:
-    build: ./frontend
-    container_name: dersaadet_frontend
-    ports:
-      - "8085:80"
-    restart: always
-
-  # Flask API
+  # Unified API & Frontend (No Nginx)
   api:
-    build: ./backend
-    container_name: dersaadet_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dersaadet_app
     ports:
-      - "5000:8088"
+      - "80:80"
     env_file: ./backend/.env
     environment:
       - REDIS_URL=redis://redis:6379/0
@@ -28,7 +22,9 @@ services:
 
   # Celery Worker
   worker:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: dersaadet_worker
     command: celery -A celery_worker.celery_app worker --loglevel=info
     env_file: ./backend/.env
