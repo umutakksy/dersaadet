@@ -36,8 +36,8 @@ RUN mkdir -p uploads images results
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Expose port (We will use 80 for the unified app)
-EXPOSE 80
+# Expose port 8088
+EXPOSE 8088
 
-# Run gunicorn on port 80
-CMD ["gunicorn", "--bind", "0.0.0.0:80", "--workers", "4", "--timeout", "120", "--access-logfile", "-", "run:app"]
+# Run gunicorn on port 8088
+CMD ["gunicorn", "--bind", "0.0.0.0:8088", "--workers", "4", "--timeout", "120", "--access-logfile", "-", "run:app"]
