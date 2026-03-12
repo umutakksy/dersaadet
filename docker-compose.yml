@@ -1,16 +1,14 @@
 # /docker-compose.yml
 services:
-  # Frontend - Direkt 8088'den çıkar
+  # Frontend
   frontend:
     build: ./frontend
     container_name: dersaadet_frontend
     ports:
       - "8085:80"
-    volumes:
-      - ./frontend/nginx-prod.conf:/etc/nginx/conf.d/default.conf:ro
     restart: always
 
-  # Flask API - Direkt 5000'den çıkar
+  # Flask API
   api:
     build: ./backend
     container_name: dersaadet_api
