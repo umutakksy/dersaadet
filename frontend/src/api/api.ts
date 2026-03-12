@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://dersaadet.seedhr.com.tr'; 
+const API_BASE_URL = 'http://13.63.57.2:5000';
 
 export interface JobStatusResponse {
     status: string;
